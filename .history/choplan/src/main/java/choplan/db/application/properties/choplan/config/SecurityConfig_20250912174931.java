@@ -1,0 +1,34 @@
+package choplan.db.application.properties.choplan.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain
+
+    filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll() // 회원가입, 로그인 모두 접근허용
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/owner/**").hasRole("OWNER")
+                .requestMatchers("/customer/**").hasRole("CUSTOMER")
+                .anyRequest().authenticated()
+                )
+                .formLogin();
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}

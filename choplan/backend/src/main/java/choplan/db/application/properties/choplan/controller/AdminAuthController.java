@@ -1,35 +1,58 @@
 package choplan.db.application.properties.choplan.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import choplan.db.application.properties.choplan.dto.AuthResponse;
 import choplan.db.application.properties.choplan.dto.LoginRequest;
 import choplan.db.application.properties.choplan.dto.SignupRequestAdmin;
+import choplan.db.application.properties.choplan.entity.Users;
 import choplan.db.application.properties.choplan.service.AdminService;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/auth/admin")
+@RequiredArgsConstructor
 public class AdminAuthController {
 
     private final AdminService adminService;
 
-    public AdminAuthController(AdminService adminService) {
-        this.adminService = adminService;
-    }
-
-    // 회원가입
+    /**
+     * ADMIN 회원가입
+     */
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> signup(@RequestBody SignupRequestAdmin request) {
-        return ResponseEntity.ok(adminService.signup(request));
+    public ResponseEntity<AuthResponse> signupAdmin(@RequestBody SignupRequestAdmin request) {
+        try {
+            Users savedAdmin = adminService.registerAdmin(request);
+
+            return ResponseEntity.ok(
+                    new AuthResponse(
+                            200,
+                            "ADMIN 회원가입 성공",
+                            java.util.Map.of(
+                                    "userId", savedAdmin.getUserId(),
+                                    "email", savedAdmin.getEmail(),
+                                    "role", savedAdmin.getRole().name()
+                            )
+                    )
+            );
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new AuthResponse(400, e.getMessage(), null));
+        }
     }
 
-    // 로그인
+    /**
+     * ADMIN 로그인
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(adminService.login(request));
+        try {
+            return ResponseEntity.ok(adminService.login(request));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new AuthResponse(400, e.getMessage(), null));
+        }
     }
 }

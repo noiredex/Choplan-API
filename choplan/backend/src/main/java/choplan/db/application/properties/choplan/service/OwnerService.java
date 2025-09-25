@@ -1,83 +1,76 @@
 package choplan.db.application.properties.choplan.service;
 
-import java.util.Map;
+import choplan.db.application.properties.choplan.dto.SignupRequestOwner;
+import choplan.db.application.properties.choplan.entity.Users;
+import choplan.db.application.properties.choplan.entity.UserRole;
+import choplan.db.application.properties.choplan.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import choplan.db.application.properties.choplan.dto.SignupRequestOwner;
-import choplan.db.application.properties.choplan.dto.LoginRequest;
-import choplan.db.application.properties.choplan.dto.AuthResponse;
-import choplan.db.application.properties.choplan.entity.UserRole;
-import choplan.db.application.properties.choplan.entity.Users;
-import choplan.db.application.properties.choplan.repository.UserRepository;
-import choplan.db.application.properties.choplan.security.JwtTokenProvider;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OwnerService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final FileStorageService fileStorageService;
+    private final S3Service s3Service;
 
-    public OwnerService(UserRepository userRepository,
-                        PasswordEncoder passwordEncoder,
-                        JwtTokenProvider jwtTokenProvider,
-                        FileStorageService fileStorageService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.fileStorageService = fileStorageService;
-    }
-
-    // 사장님 회원가입
-    public AuthResponse signup(SignupRequestOwner request, MultipartFile businessRegistrationDoc) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            return new AuthResponse(400, "이미 사용 중인 이메일입니다.", null);
+    /**
+     * OWNER 회원가입
+     */
+    public Users registerOwner(SignupRequestOwner request, MultipartFile businessDoc) {
+        // 이메일 중복 검사
+        Optional<Users> existing = userRepository.findByEmail(request.getEmail());
+        if (existing.isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        // S3 업로드 (또는 로컬)
-        String fileUrl = fileStorageService.storeFile(businessRegistrationDoc);
+        // 사업자등록증 업로드 (S3)
+        String businessDocUrl = null;
+        if (businessDoc != null && !businessDoc.isEmpty()) {
+            businessDocUrl = s3Service.uploadFile(businessDoc);
+        } else {
+            throw new IllegalArgumentException("사업자등록증은 필수 업로드 항목입니다.");
+        }
 
-        Users user = Users.builder()
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        // Users 엔티티 생성
+        Users owner = Users.builder()
                 .email(request.getEmail())
-                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .passwordHash(encodedPassword)
                 .realName(request.getRealName())
                 .phone(request.getPhone())
                 .storeName(request.getStoreName())
                 .storePhone(request.getStorePhone())
                 .storeAddress(request.getStoreAddress())
-                .businessRegistrationDoc(fileUrl)
+                .businessRegistrationDoc(businessDocUrl)
                 .role(UserRole.OWNER)
-                .approved(false) // 관리자가 승인해야 함
+                .approved(false) // 관리자 승인 전까지는 false
                 .build();
 
-        Users savedUser = userRepository.save(user);
-
-        return new AuthResponse(200, "회원가입 성공 (승인 대기 중)",
-                Map.of("userId", savedUser.getUserId(),
-                       "email", savedUser.getEmail(),
-                       "role", savedUser.getRole().name(),
-                       "approved", savedUser.isApproved()));
+        // DB 저장
+        return userRepository.save(owner);
     }
 
-    // 로그인
-    public AuthResponse login(LoginRequest request) {
-        Users user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
+    /**
+     * 관리자 승인 메소드
+     */
+    public Users approveOwner(Long ownerId) {
+        Users owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            return new AuthResponse(400, "비밀번호가 올바르지 않습니다.", null);
+        if (owner.getRole() != UserRole.OWNER) {
+            throw new IllegalArgumentException("해당 사용자는 OWNER 권한이 아닙니다.");
         }
 
-        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());
-
-        return new AuthResponse(200, "로그인 성공",
-                Map.of("token", token,
-                       "email", user.getEmail(),
-                       "role", user.getRole().name(),
-                       "approved", user.isApproved()));
+        owner.setApproved(true);
+        return userRepository.save(owner);
     }
 }

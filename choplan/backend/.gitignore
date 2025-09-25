@@ -1,0 +1,35 @@
+# Gradle
+.gradle/
+build/
+
+# IntelliJ / VSCode / Eclipse IDE 설정 파일
+*.iml
+.idea/
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS 파일
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Spring Boot
+out/
+bin/
+target/
+
+# 환경 변수 (DB 비밀번호 등)
+*.env
+application-*.yml
+application-*.properties
+
+# Node.js (프론트엔드)
+frontend/node_modules/
+frontend/dist/
+
+# 기타
+.history/

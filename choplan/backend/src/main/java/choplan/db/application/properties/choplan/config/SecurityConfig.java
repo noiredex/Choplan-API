@@ -28,10 +28,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // REST API는 CSRF 비활성화
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()   // 회원가입, 로그인은 모두 접근 허용
+                // 회원가입 / 로그인은 모두 접근 허용
+                .requestMatchers("/admin/signup", "/admin/login").permitAll()
+                .requestMatchers("/customer/signup", "/customer/login").permitAll()
+                .requestMatchers("/owner/signup", "/owner/login").permitAll()
+
+                // 권한별 보호된 API
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/owner/**").hasRole("OWNER")
                 .requestMatchers("/customer/**").hasRole("CUSTOMER")
+                .requestMatchers("/owner/**").hasRole("OWNER")
+
+                // 그 외는 인증 필요
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex

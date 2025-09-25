@@ -30,7 +30,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Users {
 
     @Id
@@ -38,40 +37,44 @@ public class Users {
     private Long userId;
 
     @Column(nullable = false, unique = true, length = 150)
-    private String email; // Email
+    private String email;
 
     @Column(nullable = false, length = 255)
-    private String passwordHash; // 비밀번호 Hash 처리
+    private String passwordHash;
 
     @Column(length = 50, nullable = false)
-    private String realName; // 공통: CUSTMOER, OWNER 실명
+    private String realName;
 
     @Column(length = 20, unique = true)
-    private String phone; // CUSTOMER, OWNER 공통 Phone Number
+    private String phone;
 
     @Column(length = 50)
     private String nickname; // CUSTOMER만 필수
 
     @Column(nullable = true)
-    private String businessRegistrationDoc; // OWNER만 필수
+    private String businessRegistrationDoc; // OWNER만 (파일 저장 URL)
 
     @Column(length = 100)
-    private String storeName; // 매장 이름 OWNER만 필수
+    private String storeName;
 
     @Column(length = 20)
-    private String storePhone; // 매장 전화번호 OWNER만 필수
+    private String storePhone;
 
     @Embedded
-    private StoreAddress storeAddress; // 매장주소 OWNER만 필수
+    private StoreAddress storeAddress;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    private UserRole role; // CUSTOMER, OWNER, ADMIN
+    private UserRole role;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    private UserStatus status = UserStatus.ACTIVE; // ACTIVE를 기본값으로 설정
+    private UserStatus status = UserStatus.ACTIVE;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean approved = false; // 관리자가 승인해야 이용 가능
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -81,17 +84,7 @@ public class Users {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    public String getPasswordHash() {
-        return this.passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
     public enum UserStatus {
-        ACTIVE,
-        SUSPENDED,
-        DELETED
+        ACTIVE, SUSPENDED, DELETED
     }
 }

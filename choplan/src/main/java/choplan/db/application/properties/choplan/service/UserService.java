@@ -28,8 +28,23 @@ public class UserService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // 회원가입
-    public AuthResponse signup(SignupRequest request) {
+    // CUSTOMER 회원가입
+    public AuthResponse signupCustomer(SignupRequest request) {
+        return signupWithRole(request, UserRole.CUSTOMER);
+    }
+
+    // OWNER 회원가입
+    public AuthResponse signupOwner(SignupRequest request) {
+        return signupWithRole(request, UserRole.OWNER);
+    }
+
+    // ADMIN 회원가입 (운영자 전용)
+    public AuthResponse signupAdmin(SignupRequest request) {
+        return signupWithRole(request, UserRole.ADMIN);
+    }
+
+    // 공통 회원가입 처리
+    private AuthResponse signupWithRole(SignupRequest request, UserRole role) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return new AuthResponse(400, "이미 사용 중인 이메일입니다.", null);
         }
@@ -40,7 +55,7 @@ public class UserService {
                 .realName(request.getRealName())
                 .phone(request.getPhone())
                 .nickname(request.getNickname())
-                .role(UserRole.valueOf(request.getRole())) // DB에는 CUSTOMER / OWNER / ADMIN 저장
+                .role(role) // 강제 지정
                 .build();
 
         Users savedUser = userRepository.save(user);
@@ -63,11 +78,7 @@ public class UserService {
             return new AuthResponse(400, "비밀번호가 올바르지 않습니다.", null);
         }
 
-        // JWT 발급 (ROLE_ prefix 붙임)
-        String token = jwtTokenProvider.createToken(
-                user.getEmail(),
-                "ROLE_" + user.getRole().name()
-        );
+        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());
 
         return new AuthResponse(200, "로그인 성공",
                 Map.of(

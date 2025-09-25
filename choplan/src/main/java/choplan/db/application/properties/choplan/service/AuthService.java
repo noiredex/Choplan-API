@@ -30,8 +30,23 @@ public class AuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // 회원가입
-    public ResponseEntity<AuthResponse> signup(SignupRequest request) {
+    // CUSTOMER 회원가입
+    public ResponseEntity<AuthResponse> signupCustomer(SignupRequest request) {
+        return signupWithRole(request, UserRole.CUSTOMER);
+    }
+
+    // OWNER 회원가입
+    public ResponseEntity<AuthResponse> signupOwner(SignupRequest request) {
+        return signupWithRole(request, UserRole.OWNER);
+    }
+
+    // ADMIN 회원가입 (운영자만 사용)
+    public ResponseEntity<AuthResponse> signupAdmin(SignupRequest request) {
+        return signupWithRole(request, UserRole.ADMIN);
+    }
+
+    // 공통 로직
+    private ResponseEntity<AuthResponse> signupWithRole(SignupRequest request, UserRole role) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new AuthResponse(400, "이미 사용 중인 이메일입니다.", null));
@@ -43,7 +58,7 @@ public class AuthService {
                 .realName(request.getRealName())
                 .phone(request.getPhone())
                 .nickname(request.getNickname())
-                .role(UserRole.valueOf(request.getRole()))
+                .role(role) // 여기서 강제 지정
                 .build();
 
         Users savedUser = userRepository.save(user);

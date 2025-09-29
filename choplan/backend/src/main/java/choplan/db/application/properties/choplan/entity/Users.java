@@ -48,7 +48,7 @@ public class Users {
     @Column(length = 20, unique = true)
     private String phone;
 
-    @Column(length = 50)
+    @Column(length = 10)
     private String nickname; // CUSTOMER만 필수
 
     @Column(nullable = true)
@@ -73,8 +73,9 @@ public class Users {
     private UserStatus status = UserStatus.ACTIVE;
 
     @Builder.Default
-    @Column(nullable = false)
-    private boolean approved = false; // 관리자가 승인해야 이용 가능
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private OwnerStatus ownerStatus = OwnerStatus.PENDING; // 관리자가 승인해야 이용 가능
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -84,6 +85,13 @@ public class Users {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    public String getPasswordHash() {
+        return this.passwordHash;
+    }
+
+public void srtPasswordHash(String passwordHash) {
+    this.passwordHash = passwordHash;
+}
     public enum UserStatus {
         ACTIVE, SUSPENDED, DELETED
     }

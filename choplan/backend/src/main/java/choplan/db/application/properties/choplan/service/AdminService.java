@@ -23,9 +23,7 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    /**
-     * ADMIN 회원가입
-     */
+    // ADMIN 회원가입
     public Users registerAdmin(SignupRequestAdmin request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
@@ -42,9 +40,7 @@ public class AdminService {
         return userRepository.save(admin);
     }
 
-    /**
-     * ADMIN 로그인
-     */
+    // ADMIN 로그인
     public AuthResponse login(LoginRequest request) {
         Users user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -55,7 +51,9 @@ public class AdminService {
 
         String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());
 
-        return new AuthResponse(200, "로그인 성공",
+        return new AuthResponse(
+                200,
+                "로그인 성공",
                 Map.of(
                         "token", token,
                         "email", user.getEmail(),
@@ -64,18 +62,16 @@ public class AdminService {
         );
     }
 
-    /**
-     * OWNER 승인 메서드 (Enum 기반)
-     */
+    // OWNER 승인 처리
     public Users approveOwner(Long ownerId) {
         Users owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 OWNER 사용자를 찾을 수 없습니다."));
 
-        if (!owner.getRole().equals(UserRole.OWNER)) {
-            throw new IllegalArgumentException("해당 사용자는 OWNER가 아닙니다.");
+        if (owner.getRole() != UserRole.OWNER) {
+            throw new IllegalArgumentException("해당 사용자는 OWNER 권한이 아닙니다.");
         }
 
-        owner.setOwnerStatus(OwnerStatus.APPROVED); // Enum 값으로 승인 처리
+        owner.setOwnerStatus(OwnerStatus.APPROVED); // 승인 처리
         return userRepository.save(owner);
     }
 }

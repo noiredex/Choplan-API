@@ -23,9 +23,7 @@ public class AdminAuthController {
 
     private final AdminService adminService;
 
-    /**
-     * ADMIN 회원가입
-     */
+    // ADMIN 회원가입
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> signupAdmin(@RequestBody SignupRequestAdmin request) {
         try {
@@ -48,9 +46,7 @@ public class AdminAuthController {
         }
     }
 
-    /**
-     * ADMIN 로그인
-     */
+    // ADMIN 로그인
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         try {
@@ -61,9 +57,7 @@ public class AdminAuthController {
         }
     }
 
-    /**
-     * OWNER 승인 (관리자 전용)
-     */
+    // OWNER 승인 API
     @PatchMapping("/approve-owner/{ownerId}")
     public ResponseEntity<AuthResponse> approveOwner(@PathVariable Long ownerId) {
         try {
@@ -76,8 +70,7 @@ public class AdminAuthController {
                             java.util.Map.of(
                                     "userId", approvedOwner.getUserId(),
                                     "email", approvedOwner.getEmail(),
-                                    "role", approvedOwner.getRole().name(),
-                                    "status", approvedOwner.getOwnerStatus().name() // Enum 상태 반환
+                                    "ownerStatus", approvedOwner.getOwnerStatus().name()
                             )
                     )
             );

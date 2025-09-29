@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import choplan.db.application.properties.choplan.dto.AuthResponse;
 import choplan.db.application.properties.choplan.dto.SignupRequestOwner;
 import choplan.db.application.properties.choplan.entity.Users;
+import choplan.db.application.properties.choplan.entity.OwnerStatus;
 import choplan.db.application.properties.choplan.service.OwnerService;
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +30,6 @@ public class OwnerAuthController {
     /**
      * OWNER 회원가입
      * - 사업자등록증 파일 업로드 필요
-     * - JSON(form-data) + MultipartFile
      */
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AuthResponse> signupOwner(
@@ -37,7 +37,10 @@ public class OwnerAuthController {
             @RequestParam("businessDoc") MultipartFile businessDoc) {
 
         try {
-            Users savedOwner = ownerService.registerOwner(request, businessDoc);
+            // ⚠️ 여기서는 MultipartFile → S3 업로드 후 URL로 변환하는 로직 필요
+            String businessDocUrl = "/uploads/" + businessDoc.getOriginalFilename();
+
+            Users savedOwner = ownerService.registerOwner(request, businessDocUrl);
 
             return ResponseEntity.ok(
                     new AuthResponse(
@@ -47,7 +50,7 @@ public class OwnerAuthController {
                                     "userId", savedOwner.getUserId(),
                                     "email", savedOwner.getEmail(),
                                     "role", savedOwner.getRole().name(),
-                                    "approved", savedOwner.isApproved()
+                                    "ownerStatus", savedOwner.getOwnerStatus().name()
                             )
                     )
             );
@@ -75,7 +78,7 @@ public class OwnerAuthController {
                                     "userId", approvedOwner.getUserId(),
                                     "email", approvedOwner.getEmail(),
                                     "role", approvedOwner.getRole().name(),
-                                    "approved", approvedOwner.isApproved()
+                                    "ownerStatus", approvedOwner.getOwnerStatus().name()
                             )
                     )
             );

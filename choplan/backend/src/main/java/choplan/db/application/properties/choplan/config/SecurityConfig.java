@@ -2,8 +2,13 @@ package choplan.db.application.properties.choplan.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -13,27 +18,30 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import choplan.db.application.properties.choplan.security.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // REST API는 CSRF 비활성화
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT 방식
             .authorizeHttpRequests(auth -> auth
-                // 회원가입 / 로그인은 모두 접근 허용
-                .requestMatchers("/admin/signup", "/admin/login").permitAll()
-                .requestMatchers("/customer/signup", "/customer/login").permitAll()
-                .requestMatchers("/owner/signup", "/owner/login").permitAll()
+                // ⭐ 회원가입 / 로그인은 모두 접근 허용
+                .requestMatchers("/auth/admin/signup", "/auth/admin/login").permitAll()
+                .requestMatchers("/auth/customer/signup", "/auth/customer/login").permitAll()
+                .requestMatchers("/auth/owner/signup", "/auth/owner/login").permitAll()
 
-                // 권한별 보호된 API
+                // ⭐ OWNER 승인 API → ADMIN 전용
+                .requestMatchers(HttpMethod.PATCH, "/auth/admin/approve-owner/**").hasRole("ADMIN")
+
+                // 권한별 API 보호
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/customer/**").hasRole("CUSTOMER")
                 .requestMatchers("/owner/**").hasRole("OWNER")
@@ -49,6 +57,12 @@ public class SecurityConfig {
             .formLogin(form -> form.disable()); // 폼 로그인 비활성화 (REST API 스타일)
 
         return http.build();
+    }
+
+    // AuthenticationManager 등록
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 
     // 비밀번호 암호화

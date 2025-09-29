@@ -1,18 +1,18 @@
 package choplan.db.application.properties.choplan.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import choplan.db.application.properties.choplan.dto.AuthResponse;
 import choplan.db.application.properties.choplan.dto.LoginRequest;
 import choplan.db.application.properties.choplan.dto.SignupRequestOwner;
+import choplan.db.application.properties.choplan.entity.OwnerStatus;
+import choplan.db.application.properties.choplan.entity.StoreAddress;
 import choplan.db.application.properties.choplan.entity.UserRole;
 import choplan.db.application.properties.choplan.entity.Users;
-import choplan.db.application.properties.choplan.entity.StoreAddress;
-import choplan.db.application.properties.choplan.entity.OwnerStatus;
 import choplan.db.application.properties.choplan.repository.UserRepository;
 import choplan.db.application.properties.choplan.security.JwtTokenProvider;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -30,11 +30,10 @@ public class OwnerService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        // DTO → StoreAddress 변환
+        // DTO → StoreAddress 변환 (우편번호 제거)
         StoreAddress storeAddress = new StoreAddress();
         storeAddress.setRoadAddress(request.getRoadAddress());
         storeAddress.setDetailAddress(request.getDetailAddress());
-        storeAddress.setPostalCode(request.getPostalCode());
 
         Users user = Users.builder()
                 .email(request.getEmail())

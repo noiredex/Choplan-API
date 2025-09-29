@@ -1,5 +1,7 @@
 package choplan.db.application.properties.choplan.service;
 
+import java.util.Map;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,7 @@ public class AdminService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        Users user = Users.builder()
+        Users admin = Users.builder()
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .realName(request.getRealName())
@@ -34,10 +36,10 @@ public class AdminService {
                 .role(UserRole.ADMIN)
                 .build();
 
-        return userRepository.save(user);
+        return userRepository.save(admin);
     }
 
-    // ADMIN 로그인
+    // 로그인
     public AuthResponse login(LoginRequest request) {
         Users user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -48,14 +50,25 @@ public class AdminService {
 
         String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());
 
-        return new AuthResponse(
-                200,
-                "로그인 성공",
-                java.util.Map.of(
+        return new AuthResponse(200, "로그인 성공",
+                Map.of(
                         "token", token,
                         "email", user.getEmail(),
                         "role", user.getRole().name()
                 )
         );
+    }
+
+    // Owner 승인 메서드 추가
+    public Users approveOwner(Long ownerId) {
+        Users owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        if (!owner.getRole().equals(UserRole.OWNER)) {
+            throw new IllegalArgumentException("해당 사용자는 OWNER가 아닙니다.");
+        }
+
+        owner.setApproved(true);
+        return userRepository.save(owner);
     }
 }

@@ -7,6 +7,7 @@ import choplan.db.application.properties.choplan.entity.UserRole;
 import choplan.db.application.properties.choplan.entity.Users;
 import choplan.db.application.properties.choplan.repository.UserRepository;
 import choplan.db.application.properties.choplan.security.JwtTokenProvider;
+import choplan.db.application.properties.choplan.entity.StoreAddress;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

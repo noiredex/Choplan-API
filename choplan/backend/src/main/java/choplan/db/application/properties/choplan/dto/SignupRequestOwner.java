@@ -1,5 +1,7 @@
 package choplan.db.application.properties.choplan.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -42,5 +44,6 @@ public class SignupRequestOwner {
     @NotBlank(message = "사업자 등록번호는 필수 입력값입니다.")
     private String businessNumber;
 
-    // 사업자 등록증 파일은 MultipartFile로 따로 받음
+    // 사업자 등록증 파일 첨부 (S3 업로드용)
+    private MultipartFile businessRegistrationFile;
 }

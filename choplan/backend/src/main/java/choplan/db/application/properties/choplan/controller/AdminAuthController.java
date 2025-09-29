@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import choplan.db.application.properties.choplan.dto.AuthResponse;
 import choplan.db.application.properties.choplan.dto.LoginRequest;
 import choplan.db.application.properties.choplan.dto.SignupRequestAdmin;
+import choplan.db.application.properties.choplan.entity.OwnerStatus;
 import choplan.db.application.properties.choplan.entity.Users;
 import choplan.db.application.properties.choplan.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -57,20 +59,23 @@ public class AdminAuthController {
         }
     }
 
-    // ⭐ OWNER 승인 API
-    @PatchMapping("/approve-owner/{ownerId}")
-    public ResponseEntity<AuthResponse> approveOwner(@PathVariable Long ownerId) {
+    // OWNER 승인 API (승인 / 거절 / 정지 / 탈퇴 등)
+    @PatchMapping("/owner/{ownerId}/status")
+    public ResponseEntity<AuthResponse> updateOwnerStatus(
+            @PathVariable Long ownerId,
+            @RequestParam("status") OwnerStatus newStatus) {
         try {
-            Users approvedOwner = adminService.approveOwner(ownerId);
+            Users updatedOwner = adminService.updateOwnerStatus(ownerId, newStatus);
 
             return ResponseEntity.ok(
                     new AuthResponse(
                             200,
-                            "OWNER 승인 완료",
+                            "OwNER 상태 변경 성공",
                             java.util.Map.of(
-                                    "userId", approvedOwner.getUserId(),
-                                    "email", approvedOwner.getEmail(),
-                                    "approved", approvedOwner.isApproved()
+                                    "userid", updatedOwner.getUserId(),
+                                    "email", updatedOwner.getEmail(),
+                                    "role", updatedOwner.getRole().name(),
+                                    "ownerStatus", updatedOwner.getOwnerStatus().name()
                             )
                     )
             );

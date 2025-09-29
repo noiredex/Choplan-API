@@ -67,10 +67,12 @@ public class Users {
     @Column(length = 20, nullable = false)
     private UserRole role;
 
-    @Builder.Default
+    // CUSTOMER 유저 상태관리
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
-    private UserStatus status = UserStatus.ACTIVE;
+    @Column(length = 20)
+    private CustomerStatus customerStatus = CustomerStatus.ACTIVE;
+
+    // OWNER 유저 상태관리, 가입승인 등
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -92,7 +94,5 @@ public class Users {
 public void srtPasswordHash(String passwordHash) {
     this.passwordHash = passwordHash;
 }
-    public enum UserStatus {
-        ACTIVE, SUSPENDED, DELETED
-    }
+
 }

@@ -7,7 +7,6 @@ import choplan.db.application.properties.choplan.entity.UserRole;
 import choplan.db.application.properties.choplan.entity.Users;
 import choplan.db.application.properties.choplan.repository.UserRepository;
 import choplan.db.application.properties.choplan.security.JwtTokenProvider;
-import choplan.db.application.properties.choplan.entity.StoreAddress;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +20,9 @@ public class OwnerService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // OWNER 회원가입
+    /**
+     * OWNER 회원가입
+     */
     public Users registerOwner(SignupRequestOwner request, String businessDocUrl) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
@@ -43,7 +44,9 @@ public class OwnerService {
         return userRepository.save(user);
     }
 
-    // OWNER 로그인
+    /**
+     * OWNER 로그인
+     */
     public AuthResponse login(LoginRequest request) {
         Users user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -67,5 +70,20 @@ public class OwnerService {
                         "role", user.getRole().name()
                 )
         );
+    }
+
+    /**
+     * OWNER 승인 (관리자 전용)
+     */
+    public Users approveOwner(Long ownerId) {
+        Users owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 OWNER 사용자를 찾을 수 없습니다."));
+
+        if (owner.getRole() != UserRole.OWNER) {
+            throw new IllegalArgumentException("해당 사용자는 OWNER 권한이 아닙니다.");
+        }
+
+        owner.setApproved(true); // 승인 처리
+        return userRepository.save(owner);
     }
 }

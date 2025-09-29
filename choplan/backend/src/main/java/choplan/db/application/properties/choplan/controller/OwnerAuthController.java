@@ -1,6 +1,7 @@
 package choplan.db.application.properties.choplan.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,9 +28,10 @@ public class OwnerAuthController {
 
     /**
      * OWNER 회원가입
-     * 사업자등록증 파일 업로드 필요
+     * - 사업자등록증 파일 업로드 필요
+     * - JSON(form-data) + MultipartFile
      */
-    @PostMapping("/signup")
+    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AuthResponse> signupOwner(
             @ModelAttribute SignupRequestOwner request,
             @RequestParam("businessDoc") MultipartFile businessDoc) {
@@ -56,7 +58,8 @@ public class OwnerAuthController {
     }
 
     /**
-     * OWNER 승인 (관리자만 호출 가능)
+     * OWNER 승인
+     * - 관리자만 호출 가능
      */
     @PatchMapping("/approve/{ownerId}")
     @PreAuthorize("hasRole('ADMIN')")

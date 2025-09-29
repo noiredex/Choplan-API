@@ -1,16 +1,18 @@
 package choplan.db.application.properties.choplan.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import choplan.db.application.properties.choplan.dto.AuthResponse;
 import choplan.db.application.properties.choplan.dto.LoginRequest;
 import choplan.db.application.properties.choplan.dto.SignupRequestOwner;
+import choplan.db.application.properties.choplan.entity.OwnerStatus;
+import choplan.db.application.properties.choplan.entity.StoreAddress;
 import choplan.db.application.properties.choplan.entity.UserRole;
 import choplan.db.application.properties.choplan.entity.Users;
 import choplan.db.application.properties.choplan.repository.UserRepository;
 import choplan.db.application.properties.choplan.security.JwtTokenProvider;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,10 @@ public class OwnerService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
+        // DTO의 roadAddress → StoreAddress 변환
+        StoreAddress storeAddress = new StoreAddress();
+        storeAddress.setRoadAddress(request.getRoadAddress());
+
         Users user = Users.builder()
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
@@ -35,10 +41,10 @@ public class OwnerService {
                 .phone(request.getPhone())
                 .storeName(request.getStoreName())
                 .storePhone(request.getStorePhone())
-                .storeAddress(request.getStoreAddress())
+                .storeAddress(storeAddress)
                 .businessRegistrationDoc(businessDocUrl) // 업로드된 파일의 S3 URL
                 .role(UserRole.OWNER)
-                .approved(false) // 관리자 승인 전까지 false
+                .ownerStatus(OwnerStatus.PENDING) // 기본값: 승인 대기
                 .build();
 
         return userRepository.save(user);
@@ -55,7 +61,8 @@ public class OwnerService {
             throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
         }
 
-        if (!user.isApproved()) {
+        // OWNER는 승인 상태여야 로그인 가능
+        if (user.getRole() == UserRole.OWNER && user.getOwnerStatus() != OwnerStatus.APPROVED) {
             throw new IllegalArgumentException("관리자 승인 후 로그인 가능합니다.");
         }
 
@@ -83,7 +90,7 @@ public class OwnerService {
             throw new IllegalArgumentException("해당 사용자는 OWNER 권한이 아닙니다.");
         }
 
-        owner.setApproved(true); // 승인 처리
+        owner.setOwnerStatus(OwnerStatus.APPROVED); // Enum 기반으로 변경
         return userRepository.save(owner);
     }
 }

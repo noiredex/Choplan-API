@@ -23,7 +23,9 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // ADMIN 회원가입
+    /**
+     * ADMIN 회원가입
+     */
     public Users registerAdmin(SignupRequestAdmin request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
@@ -40,7 +42,9 @@ public class AdminService {
         return userRepository.save(admin);
     }
 
-    // 로그인
+    /**
+     * ADMIN 로그인
+     */
     public AuthResponse login(LoginRequest request) {
         Users user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -60,8 +64,10 @@ public class AdminService {
         );
     }
 
-    // Owner 승인 메서드(boolean) 추가 -> 승인 메서드에서 상태 변경 메서드(enum)으로 변경
-    public Users updateOwnerStatus(Long ownerId, OwnerStatus newStatus) {
+    /**
+     * OWNER 승인 메서드 (Enum 기반)
+     */
+    public Users approveOwner(Long ownerId) {
         Users owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
@@ -69,8 +75,7 @@ public class AdminService {
             throw new IllegalArgumentException("해당 사용자는 OWNER가 아닙니다.");
         }
 
-        owner.setOwnerStatus(newStatus);
+        owner.setOwnerStatus(OwnerStatus.APPROVED); // Enum 값으로 승인 처리
         return userRepository.save(owner);
-
     }
 }

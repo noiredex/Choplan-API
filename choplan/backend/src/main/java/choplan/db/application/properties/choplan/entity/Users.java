@@ -37,47 +37,46 @@ public class Users {
     private Long userId;
 
     @Column(nullable = false, unique = true, length = 150)
-    private String email;
+    private String email; // Email
 
     @Column(nullable = false, length = 255)
-    private String passwordHash;
+    private String passwordHash; // 비밀번호 Hash 처리
 
     @Column(length = 50, nullable = false)
-    private String realName;
+    private String realName; // CUSTOMER, OWNER, ADMIN 실명
 
     @Column(length = 20, unique = true)
-    private String phone;
+    private String phone; // CUSTOMER, OWNER 공통 Phone Number
 
-    @Column(length = 10)
+    @Column(length = 50)
     private String nickname; // CUSTOMER만 필수
 
     @Column(nullable = true)
-    private String businessRegistrationDoc; // OWNER만 (파일 저장 URL)
+    private String businessRegistrationDoc; // OWNER만 필수 (파일 저장 경로나 S3 URL)
 
     @Column(length = 100)
-    private String storeName;
+    private String storeName; // 매장 이름 OWNER만 필수
 
     @Column(length = 20)
-    private String storePhone;
+    private String storePhone; // 매장 전화번호 OWNER만 필수
 
     @Embedded
-    private StoreAddress storeAddress;
+    private StoreAddress storeAddress; // 매장 주소 OWNER만 필수
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    private UserRole role;
+    private UserRole role; // CUSTOMER, OWNER, ADMIN
 
-    // CUSTOMER 유저전용 상태관리
-    @Builder.Default
+    // CUSTOMER 유저 전용 상태관리
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private CustomerStatus customerStatus = CustomerStatus.ACTIVE;
 
-    // OWNER 유저전용 상태관리, 가입승인 등
+    // OWNER 유저 전용 상태관리 (가입 승인 등)
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    private OwnerStatus ownerStatus = OwnerStatus.PENDING; // 관리자가 승인해야 이용 가능
+    private OwnerStatus ownerStatus = OwnerStatus.PENDING; // 기본값: 승인 대기
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -87,12 +86,12 @@ public class Users {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // Getter/Setter
     public String getPasswordHash() {
         return this.passwordHash;
     }
 
-public void setPasswordHash(String passwordHash) {
-    this.passwordHash = passwordHash;
-}
-
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 }

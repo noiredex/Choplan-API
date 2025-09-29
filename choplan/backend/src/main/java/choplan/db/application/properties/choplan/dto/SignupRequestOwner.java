@@ -36,7 +36,7 @@ public class SignupRequestOwner {
     @Pattern(regexp = "^[0-9]*$", message = "전화번호는 숫자만 입력 가능합니다.")
     private String storePhone;
 
-    @NotBlank(message = "가게 주소는 필수 입력값입니다.")
+    @NotBlank(message = "가게 도로명 주소는 필수 입력값입니다.")
     private String roadAddress;
 
     @NotBlank(message = "사업자 등록번호는 필수 입력값입니다.")

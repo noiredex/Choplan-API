@@ -28,7 +28,6 @@ public class AdminAuthController {
     public ResponseEntity<AuthResponse> signupAdmin(@RequestBody SignupRequestAdmin request) {
         try {
             Users savedAdmin = adminService.registerAdmin(request);
-
             return ResponseEntity.ok(
                     new AuthResponse(
                             200,
@@ -57,12 +56,11 @@ public class AdminAuthController {
         }
     }
 
-    // OWNER 승인 API
+    // OWNER 승인
     @PatchMapping("/approve-owner/{ownerId}")
     public ResponseEntity<AuthResponse> approveOwner(@PathVariable Long ownerId) {
         try {
             Users approvedOwner = adminService.approveOwner(ownerId);
-
             return ResponseEntity.ok(
                     new AuthResponse(
                             200,
@@ -70,6 +68,7 @@ public class AdminAuthController {
                             java.util.Map.of(
                                     "userId", approvedOwner.getUserId(),
                                     "email", approvedOwner.getEmail(),
+                                    "role", approvedOwner.getRole().name(),
                                     "ownerStatus", approvedOwner.getOwnerStatus().name()
                             )
                     )

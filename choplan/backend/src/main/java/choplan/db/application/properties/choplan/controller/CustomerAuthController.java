@@ -1,45 +1,41 @@
 package choplan.db.application.properties.choplan.controller;
 
 import choplan.db.application.properties.choplan.dto.AuthResponse;
-import choplan.db.application.properties.choplan.dto.SignupRequestOwner;
+import choplan.db.application.properties.choplan.dto.LoginRequest;
+import choplan.db.application.properties.choplan.dto.SignupRequestCustomer;
 import choplan.db.application.properties.choplan.entity.Users;
-import choplan.db.application.properties.choplan.service.OwnerService;
+import choplan.db.application.properties.choplan.entity.CustomerStatus;
+import choplan.db.application.properties.choplan.service.CustomerService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/auth/owner")
+@RequestMapping("/auth/customer")
 @RequiredArgsConstructor
-public class OwnerAuthController {
+public class CustomerAuthController {
 
-    private final OwnerService ownerService;
+    private final CustomerService customerService;
 
     /**
-     * OWNER 회원가입
-     * 사업자등록증 파일 업로드 필요
+     * CUSTOMER 회원가입
      */
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> signupOwner(
-            @ModelAttribute SignupRequestOwner request,
-            @RequestParam("businessDoc") MultipartFile businessDoc) {
-
+    public ResponseEntity<AuthResponse> signupCustomer(@RequestBody SignupRequestCustomer request) {
         try {
-            Users savedOwner = ownerService.registerOwner(request, businessDoc);
+            Users savedCustomer = customerService.registerCustomer(request);
 
             return ResponseEntity.ok(
                     new AuthResponse(
                             200,
-                            "OWNER 회원가입 성공 (관리자 승인 대기중)",
+                            "CUSTOMER 회원가입 성공",
                             java.util.Map.of(
-                                    "userId", savedOwner.getUserId(),
-                                    "email", savedOwner.getEmail(),
-                                    "role", savedOwner.getRole().name(),
-                                    "approved", savedOwner.isApproved()
+                                    "userId", savedCustomer.getUserId(),
+                                    "email", savedCustomer.getEmail(),
+                                    "role", savedCustomer.getRole().name(),
+                                    "customerStatus", savedCustomer.getCustomerStatus().name()
                             )
                     )
             );
@@ -50,23 +46,37 @@ public class OwnerAuthController {
     }
 
     /**
-     * OWNER 승인 (관리자만 호출 가능)
+     * CUSTOMER 로그인
      */
-    @PatchMapping("/approve/{ownerId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<AuthResponse> approveOwner(@PathVariable Long ownerId) {
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         try {
-            Users approvedOwner = ownerService.approveOwner(ownerId);
+            return ResponseEntity.ok(customerService.login(request));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new AuthResponse(400, e.getMessage(), null));
+        }
+    }
+
+    /**
+     * CUSTOMER 계정 상태 변경 (관리자 전용)
+     */
+    @PatchMapping("/status/{customerId}")
+    public ResponseEntity<AuthResponse> updateStatus(
+            @PathVariable Long customerId,
+            @RequestParam CustomerStatus status) {
+        try {
+            Users updatedCustomer = customerService.updateCustomerStatus(customerId, status);
 
             return ResponseEntity.ok(
                     new AuthResponse(
                             200,
-                            "OWNER 승인 완료",
+                            "CUSTOMER 상태 변경 완료",
                             java.util.Map.of(
-                                    "userId", approvedOwner.getUserId(),
-                                    "email", approvedOwner.getEmail(),
-                                    "role", approvedOwner.getRole().name(),
-                                    "approved", approvedOwner.isApproved()
+                                    "userId", updatedCustomer.getUserId(),
+                                    "email", updatedCustomer.getEmail(),
+                                    "role", updatedCustomer.getRole().name(),
+                                    "customerStatus", updatedCustomer.getCustomerStatus().name()
                             )
                     )
             );

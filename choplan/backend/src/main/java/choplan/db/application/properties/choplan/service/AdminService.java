@@ -52,8 +52,7 @@ public class AdminService {
         String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());
 
         return new AuthResponse(
-                200,
-                "로그인 성공",
+                200, "로그인 성공",
                 Map.of(
                         "token", token,
                         "email", user.getEmail(),
@@ -62,7 +61,7 @@ public class AdminService {
         );
     }
 
-    // OWNER 승인 처리
+    // OWNER 승인
     public Users approveOwner(Long ownerId) {
         Users owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 OWNER 사용자를 찾을 수 없습니다."));
@@ -71,7 +70,7 @@ public class AdminService {
             throw new IllegalArgumentException("해당 사용자는 OWNER 권한이 아닙니다.");
         }
 
-        owner.setOwnerStatus(OwnerStatus.APPROVED); // 승인 처리
+        owner.setOwnerStatus(OwnerStatus.APPROVED);
         return userRepository.save(owner);
     }
 }

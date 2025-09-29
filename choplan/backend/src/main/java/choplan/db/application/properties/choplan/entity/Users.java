@@ -67,13 +67,13 @@ public class Users {
     @Column(length = 20, nullable = false)
     private UserRole role;
 
-    // CUSTOMER 유저 상태관리
+    // CUSTOMER 유저전용 상태관리
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private CustomerStatus customerStatus = CustomerStatus.ACTIVE;
 
-    // OWNER 유저 상태관리, 가입승인 등
-
+    // OWNER 유저전용 상태관리, 가입승인 등
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
@@ -91,7 +91,7 @@ public class Users {
         return this.passwordHash;
     }
 
-public void srtPasswordHash(String passwordHash) {
+public void setPasswordHash(String passwordHash) {
     this.passwordHash = passwordHash;
 }
 

@@ -60,16 +60,17 @@ public class AdminService {
         );
     }
 
-    // Owner 승인 메서드 추가
+    // Owner 승인 메서드(boolean) 추가 -> 승인 메서드에서 상태 변경 메서드(enum)으로 변경
     public Users updateOwnerStatus(Long ownerId, OwnerStatus newStatus) {
         Users owner = userRepository.findById(ownerId)
-        .orElseThrow(() -> new IllegalArgumentException("해당 OWNER ID를 찾을 수 없습니다."));
-        
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
         if (!owner.getRole().equals(UserRole.OWNER)) {
-            throw new IllegalArgumentException("해당 계정은 OWNER 계정이 아닙니다.");
+            throw new IllegalArgumentException("해당 사용자는 OWNER가 아닙니다.");
         }
 
         owner.setOwnerStatus(newStatus);
         return userRepository.save(owner);
+
     }
 }

@@ -1,0 +1,16 @@
+.payBtn {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-block;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: #1f5fbe;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .02s ease, opacity .15s ease;
+}
+.payBtn:hover { transform: translateY(-1px); }
+.payBtn:active { transform: translateY(0); }
+.payBtn:disabled { opacity: .55; cursor: not-allowed; filter: grayscale(15%); }

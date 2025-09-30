@@ -1,0 +1,36 @@
+portone:
+    base-url: https://api.iamport.kr
+    api-key: "0603811363534754"
+    api-secret: "TcrMj17H3wq00ZXkN04c7W7s8KR3JQtbaJtuaQmDslpQcz0x3UywLFNHQBdLYgsaMQ3XiWheSrDtKQkg"
+
+server:
+    port: 8080
+
+spring:
+    datasource:
+        url: jdbc:mariadb://127.0.0.1:6666/choplan
+        driver-class-name: org.mariadb.jdbc.Driver
+        username: choplan_user
+        password: choplan_pw
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MariaDBDialect
+        show-sql: true
+
+    jackson:
+        time-zone: Asia/Seoul
+
+logging:
+    level:
+        org.springframework.security: DEBUG    
+
+app:
+    cors-allowed-origin: http://localhost:5173
+    
+payment:
+    redirect-url: http://localhost:5173/payment/redirect
+    webhook-url: http://localhost:8080/api/v1/payments/webhooks

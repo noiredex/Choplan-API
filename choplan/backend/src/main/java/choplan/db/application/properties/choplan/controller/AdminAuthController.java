@@ -14,9 +14,9 @@ import choplan.db.application.properties.choplan.dto.AuthResponse;
 import choplan.db.application.properties.choplan.dto.LoginRequest;
 import choplan.db.application.properties.choplan.dto.SignupRequestAdmin;
 import choplan.db.application.properties.choplan.entity.CustomerStatus;
+import choplan.db.application.properties.choplan.entity.OwnerStatus;
 import choplan.db.application.properties.choplan.entity.Users;
 import choplan.db.application.properties.choplan.service.AdminService;
-import choplan.db.application.properties.choplan.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class AdminAuthController {
 
     private final AdminService adminService;
-    private final CustomerService customerService;
 
     // ADMIN 회원가입
     @PostMapping("/signup")
@@ -61,21 +60,23 @@ public class AdminAuthController {
         }
     }
 
-    // OWNER 승인
-    @PatchMapping("/approve-owner/{ownerId}")
-    public ResponseEntity<AuthResponse> approveOwner(@PathVariable Long ownerId) {
+    // OWNER 상태 변경
+    @PatchMapping("/owner/status/{ownerId}")
+    public ResponseEntity<AuthResponse> updateOwnerStatus(
+            @PathVariable Long ownerId,
+            @RequestParam OwnerStatus status) {
         try {
-            Users approvedOwner = adminService.approveOwner(ownerId);
+            Users updatedOwner = adminService.updateOwnerStatus(ownerId, status);
 
             return ResponseEntity.ok(
                     new AuthResponse(
                             200,
-                            "OWNER 승인 완료",
+                            "OWNER 상태 변경 완료",
                             java.util.Map.of(
-                                    "userId", approvedOwner.getUserId(),
-                                    "email", approvedOwner.getEmail(),
-                                    "role", approvedOwner.getRole().name(),
-                                    "ownerStatus", approvedOwner.getOwnerStatus().name()
+                                    "userId", updatedOwner.getUserId(),
+                                    "email", updatedOwner.getEmail(),
+                                    "role", updatedOwner.getRole().name(),
+                                    "ownerStatus", updatedOwner.getOwnerStatus().name()
                             )
                     )
             );
@@ -86,12 +87,12 @@ public class AdminAuthController {
     }
 
     // CUSTOMER 상태 변경
-    @PatchMapping("/customer-status/{customerId}")
+    @PatchMapping("/customer/status/{customerId}")
     public ResponseEntity<AuthResponse> updateCustomerStatus(
             @PathVariable Long customerId,
             @RequestParam CustomerStatus status) {
         try {
-            Users updatedCustomer = customerService.updateCustomerStatus(customerId, status);
+            Users updatedCustomer = adminService.updateCustomerStatus(customerId, status);
 
             return ResponseEntity.ok(
                     new AuthResponse(

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import choplan.db.application.properties.choplan.dto.AuthResponse;
 import choplan.db.application.properties.choplan.dto.LoginRequest;
 import choplan.db.application.properties.choplan.dto.SignupRequestAdmin;
+import choplan.db.application.properties.choplan.entity.CustomerStatus;
 import choplan.db.application.properties.choplan.entity.OwnerStatus;
 import choplan.db.application.properties.choplan.entity.UserRole;
 import choplan.db.application.properties.choplan.entity.Users;
@@ -52,7 +53,8 @@ public class AdminService {
         String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());
 
         return new AuthResponse(
-                200, "로그인 성공",
+                200,
+                "로그인 성공",
                 Map.of(
                         "token", token,
                         "email", user.getEmail(),
@@ -61,8 +63,8 @@ public class AdminService {
         );
     }
 
-    // OWNER 승인
-    public Users approveOwner(Long ownerId) {
+    // OWNER 상태 변경 (승인/거절/정지/탈퇴)
+    public Users updateOwnerStatus(Long ownerId, OwnerStatus status) {
         Users owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 OWNER 사용자를 찾을 수 없습니다."));
 
@@ -70,7 +72,20 @@ public class AdminService {
             throw new IllegalArgumentException("해당 사용자는 OWNER 권한이 아닙니다.");
         }
 
-        owner.setOwnerStatus(OwnerStatus.APPROVED);
+        owner.setOwnerStatus(status);
         return userRepository.save(owner);
+    }
+
+    // CUSTOMER 상태 변경 (활성/정지/탈퇴)
+    public Users updateCustomerStatus(Long customerId, CustomerStatus status) {
+        Users customer = userRepository.findById(customerId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 CUSTOMER 사용자를 찾을 수 없습니다."));
+
+        if (customer.getRole() != UserRole.CUSTOMER) {
+            throw new IllegalArgumentException("해당 사용자는 CUSTOMER 권한이 아닙니다.");
+        }
+
+        customer.setCustomerStatus(status);
+        return userRepository.save(customer);
     }
 }

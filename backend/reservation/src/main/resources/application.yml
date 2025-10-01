@@ -22,5 +22,5 @@ app:
 
 portone:
     api-key: ${0603811363534754}
-    api-secret: ${TcrMj17H3wq00ZXkN04c7W7s8KR3JQtbaJtuaQmDslpQcz0x3UywLFNHQBdLYgsaMQ3XiWheSrDtKQkg}
+    api-secret: ${wOeXgPOL7z1zlAqgArKHnCj5ZvtNllOaxec69CsPZndsTQKtIbkoLpdNerQOBjkpkQzuNCbvIPszl2Ea}
     webhook-secret:

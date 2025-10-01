@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  datasource:
+    url: jdbc:mariadb://localhost:6666/sonsing?userUnicode=true&characterEncoding=UTF-8
+    username: sonsing_user
+    password: sonsing_pw
+    driver-class-name: org.mariadb.jdbc.Driver
+
+app:
+    cors:
+        allowed-origins: "http://localhost:5173"
+
+portone:
+    api-key: ${0603811363534754}
+    api-secret: ${TcrMj17H3wq00ZXkN04c7W7s8KR3JQtbaJtuaQmDslpQcz0x3UywLFNHQBdLYgsaMQ3XiWheSrDtKQkg}
+    webhook-secret:

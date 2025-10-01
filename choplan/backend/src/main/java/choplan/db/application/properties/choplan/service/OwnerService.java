@@ -64,7 +64,7 @@ public class OwnerService {
 
         if (user.getOwnerStatus() != OwnerStatus.APPROVED) {
             throw new IllegalArgumentException("관리자 승인 후 로그인 가능합니다. (현재 상태: "
-                                               + user.getOwnerStatus().name() + ")");
+                    + user.getOwnerStatus().name() + ")");
         }
 
         String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole().name());

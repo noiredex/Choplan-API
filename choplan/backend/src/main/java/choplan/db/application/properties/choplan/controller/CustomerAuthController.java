@@ -1,16 +1,18 @@
 package choplan.db.application.properties.choplan.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import choplan.db.application.properties.choplan.dto.AuthResponse;
 import choplan.db.application.properties.choplan.dto.LoginRequest;
 import choplan.db.application.properties.choplan.dto.SignupRequestCustomer;
 import choplan.db.application.properties.choplan.entity.Users;
-import choplan.db.application.properties.choplan.entity.CustomerStatus;
 import choplan.db.application.properties.choplan.service.CustomerService;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth/customer")
@@ -52,34 +54,6 @@ public class CustomerAuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         try {
             return ResponseEntity.ok(customerService.login(request));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new AuthResponse(400, e.getMessage(), null));
-        }
-    }
-
-    /**
-     * CUSTOMER 계정 상태 변경 (관리자 전용)
-     */
-    @PatchMapping("/status/{customerId}")
-    public ResponseEntity<AuthResponse> updateStatus(
-            @PathVariable Long customerId,
-            @RequestParam CustomerStatus status) {
-        try {
-            Users updatedCustomer = customerService.updateCustomerStatus(customerId, status);
-
-            return ResponseEntity.ok(
-                    new AuthResponse(
-                            200,
-                            "CUSTOMER 상태 변경 완료",
-                            java.util.Map.of(
-                                    "userId", updatedCustomer.getUserId(),
-                                    "email", updatedCustomer.getEmail(),
-                                    "role", updatedCustomer.getRole().name(),
-                                    "customerStatus", updatedCustomer.getCustomerStatus().name()
-                            )
-                    )
-            );
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new AuthResponse(400, e.getMessage(), null));

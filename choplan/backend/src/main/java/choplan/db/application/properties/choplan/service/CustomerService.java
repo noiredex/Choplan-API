@@ -21,9 +21,7 @@ public class CustomerService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    /**
-     * CUSTOMER 회원가입
-     */
+    // CUSTOMER 회원가입
     public Users registerCustomer(SignupRequestCustomer request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
@@ -36,15 +34,13 @@ public class CustomerService {
                 .phone(request.getPhone())
                 .nickname(request.getNickname())
                 .role(UserRole.CUSTOMER)
-                .customerStatus(CustomerStatus.ACTIVE) // ✅ 기본 상태 추가
+                .customerStatus(CustomerStatus.ACTIVE) // 기본값 ACTIVE
                 .build();
 
         return userRepository.save(user);
     }
 
-    /**
-     * CUSTOMER 로그인
-     */
+    // CUSTOMER 로그인
     public AuthResponse login(LoginRequest request) {
         Users user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -53,8 +49,9 @@ public class CustomerService {
             throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
         }
 
+        // 상태 체크 (활성 사용자만 로그인 가능)
         if (user.getCustomerStatus() != CustomerStatus.ACTIVE) {
-            throw new IllegalArgumentException("이 계정은 현재 로그인할 수 없는 상태입니다. (상태: " 
+            throw new IllegalArgumentException("현재 계정 상태로는 로그인할 수 없습니다. (상태: "
                                                + user.getCustomerStatus().name() + ")");
         }
 
@@ -72,18 +69,16 @@ public class CustomerService {
         );
     }
 
-    /**
-     * CUSTOMER 상태 변경 (관리자 전용)
-     */
+    // CUSTOMER 상태 변경 (관리자 전용)
     public Users updateCustomerStatus(Long customerId, CustomerStatus status) {
         Users customer = userRepository.findById(customerId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 CUSTOMER 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 CUSTOMER를 찾을 수 없습니다."));
 
         if (customer.getRole() != UserRole.CUSTOMER) {
             throw new IllegalArgumentException("해당 사용자는 CUSTOMER 권한이 아닙니다.");
         }
 
-        customer.setCustomerStatus(status); // ✅ 상태 변경
+        customer.setCustomerStatus(status);
         return userRepository.save(customer);
     }
 }

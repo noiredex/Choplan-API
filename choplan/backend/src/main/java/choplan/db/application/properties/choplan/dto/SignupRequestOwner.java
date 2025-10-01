@@ -42,7 +42,7 @@ public class SignupRequestOwner {
     private String roadAddress;
 
     @NotBlank(message = "가게 상세주소는 필수 입력값입니다.")
-    private String detailAddress;   // ✅ 새로 추가된 필드
+    private String detailAddress;   // 새로 추가된 필드
 
     @NotBlank(message = "사업자 등록번호는 필수 입력값입니다.")
     private String businessNumber;

@@ -26,7 +26,7 @@ public class PaymentService {
 
     @Transactional
     public DepositIntentResponse createDepositIntent(Long reservationId) {
-        int amount = 200; // 보증금 설정금액
+        int amount = 200; // 보증금 설정금액 *(100원 이상 설정)
         String merchantUid = "RSV-" + reservationId + "-DEPOSIT-" + UUID.randomUUID();
 
         Reservation reservation = reservationRepository.findById(reservationId)

@@ -36,7 +36,7 @@ export default function ReservationPage() {
             IMP.init(import.meta.env.VITE_PORTONE_MERCHANT_CODE);
 
             IMP.request_pay({
-                pg: 'tosspay',
+                pg: 'tosspayments',
                 pay_method: 'card',
                 merchant_uid: merchantUid,
                 name,

@@ -2,13 +2,16 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: reservation
+
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        format_sql: true
-    open-in-view: false
+        format-sql: true
+        show-sql: true
 
   datasource:
     url: jdbc:mariadb://localhost:6666/sonsing?userUnicode=true&characterEncoding=UTF-8
@@ -21,6 +24,7 @@ app:
         allowed-origins: "http://localhost:5173"
 
 portone:
-    api-key: ${0603811363534754}
-    api-secret: ${wOeXgPOL7z1zlAqgArKHnCj5ZvtNllOaxec69CsPZndsTQKtIbkoLpdNerQOBjkpkQzuNCbvIPszl2Ea}
-    webhook-secret:
+  api:
+    key: ${0603811363534754}
+    secret: ${wOeXgPOL7z1zlAqgArKHnCj5ZvtNllOaxec69CsPZndsTQKtIbkoLpdNerQOBjkpkQzuNCbvIPszl2Ea}
+    

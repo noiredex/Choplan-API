@@ -4,22 +4,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Configuration
-@ConfigurationProperties(prefix = "portone")
+@ConfigurationProperties(prefix = "portone.api")
 public class PortOneProperties {
-    private String apiKey;
-    private String apiSecret;
-    private String webhookSecret;
+    private String key;
+    private String secret;
 
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
+    public void setKey(String key) {
+        this.key = key;
     }
-    public void setApiSecret(String apiSecret) {
-        this.apiSecret = apiSecret;
+
+    public void setSecret(String secret) {
+        this.secret = secret;
     }
-    public void setWebhookSecret(String webhookSecret) {
-        this.webhookSecret = webhookSecret;
-    }
+
 }

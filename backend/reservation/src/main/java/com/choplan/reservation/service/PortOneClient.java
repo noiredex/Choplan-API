@@ -11,17 +11,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import com.choplan.reservation.config.PortOneProperties;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @Component
 @RequiredArgsConstructor
 public class PortOneClient {
     private final PortOneProperties props;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    
     public String getAccessToken() {
         String url = "https://api.iamport.kr/users/getToken"; // v1 토큰
 

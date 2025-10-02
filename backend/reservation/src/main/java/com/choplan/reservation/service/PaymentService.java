@@ -25,10 +25,10 @@ public class PaymentService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
-    public DepositIntentResponse createDepositIntent (Long reservationId) {
-        int amount = 1; //보증금 설정금액
+    public DepositIntentResponse createDepositIntent(Long reservationId) {
+        int amount = 200; // 보증금 설정금액
         String merchantUid = "RSV-" + reservationId + "-DEPOSIT-" + UUID.randomUUID();
-        
+
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
 

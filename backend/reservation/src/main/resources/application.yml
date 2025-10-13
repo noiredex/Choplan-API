@@ -25,6 +25,6 @@ app:
 
 portone:
   api:
-    key: ${0603811363534754}
-    secret: ${wOeXgPOL7z1zlAqgArKHnCj5ZvtNllOaxec69CsPZndsTQKtIbkoLpdNerQOBjkpkQzuNCbvIPszl2Ea}
+    key: "0603811363534754"
+    secret: "wOeXgPOL7z1zlAqgArKHnCj5ZvtNllOaxec69CsPZndsTQKtIbkoLpdNerQOBjkpkQzuNCbvIPszl2Ea"
     

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.choplan.reservation.domain.Payment;
 import com.choplan.reservation.domain.Reservation;
 import com.choplan.reservation.dto.DepositIntentResponse;
+import com.choplan.reservation.dto.PaymentConfirmRequest;
 import com.choplan.reservation.repository.PaymentRepository;
 import com.choplan.reservation.repository.ReservationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +27,7 @@ public class PaymentService {
 
     @Transactional
     public DepositIntentResponse createDepositIntent(Long reservationId) {
-        int amount = 200; // 보증금 설정금액 *(100원 이상 설정)
+        int amount = 1000; // 보증금 1,000원으로 변경 (최소 결제 금액 준수)
         String merchantUid = "RSV-" + reservationId + "-DEPOSIT-" + UUID.randomUUID();
 
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -48,32 +49,53 @@ public class PaymentService {
     }
 
     @Transactional
-    public void confirm(String impUid, String merchantUid, Long reservationId) throws Exception {
+    public void confirm(PaymentConfirmRequest req) {
         String token = portOneClient.getAccessToken();
-        Map<String, Object> pay = portOneClient.getPaymentByImpUid(token, impUid);
+        Map<String, Object> pay = portOneClient.getPaymentByImpUid(token, req.getImpUid());
 
-        int amount = (int) ((Number) pay.get("amount")).intValue();
+        if (pay == null) {
+            throw new IllegalArgumentException("PortOne payment not found by impUid");
+        }
+
+        int amount = ((Number) pay.get("amount")).intValue();
         String status = (String) pay.get("status");
         String payMethod = (String) pay.get("pay_method");
-        String receipUrl = (String) pay.get("receipt_url");
+        String receiptUrl = (String) pay.get("receipt_url");
+        String pgMerchantUid = (String) pay.get("merchant_uid");
 
-        Payment payment = paymentRepository.findByMerchantUid(merchantUid)
-                .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
-
-        if (payment.getAmount() != amount) {
-            throw new IllegalArgumentException("Amount mismatch");
-        }
         if (!"paid".equalsIgnoreCase(status)) {
-            throw new IllegalArgumentException("Payment not paid: " + status);
+            throw new IllegalArgumentException("Payment no paid: " + status);
         }
 
-        payment.setImpUid(impUid);
+        if (amount != 1_000) {
+            throw new IllegalArgumentException("amount mismatch");
+        }
+
+        paymentRepository.findByImpUid(req.getImpUid()).ifPresent(existing -> {
+            return;
+        });
+
+        Payment payment = paymentRepository.findByMerchantUid(req.getMerchantUid()).orElseGet(() -> {
+            Reservation reservation = reservationRepository.findById(req.getReservationId())
+                    .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+            return Payment.builder()
+                    .reservation(reservation)
+                    .merchantUid(pgMerchantUid)
+                    .amount(amount)
+                    .status("READY")
+                    .build();
+        });
+
+        payment.setImpUid(req.getImpUid());
         payment.setStatus("PAID");
         payment.setMethod(payMethod);
         payment.setProvider("portone");
         payment.setPaidAt(LocalDateTime.now());
-        payment.setReceiptUrl(receipUrl);
-        payment.setRawPayload(objectMapper.writeValueAsString(pay));
+        payment.setReceiptUrl(receiptUrl);
+        try {
+            payment.setRawPayload(objectMapper.writeValueAsString(pay));
+        } catch (Exception e) {
+        }
 
         Reservation r = payment.getReservation();
         r.setStatus("PAID");

@@ -7,4 +7,5 @@ import com.choplan.reservation.domain.Payment;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Optional<Payment> findByImpUid(String impUid);
     Optional<Payment> findByMerchantUid(String merchantUid);
+    Optional<Payment> findTopByReservationIdAndStatusOrderByIdDesc(Long reservationId,String status);
 }

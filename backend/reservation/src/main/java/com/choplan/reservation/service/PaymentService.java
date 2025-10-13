@@ -2,6 +2,7 @@ package com.choplan.reservation.service;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -16,7 +17,9 @@ import com.choplan.reservation.repository.ReservationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -67,35 +70,58 @@ public class PaymentService {
             throw new IllegalArgumentException("Payment no paid: " + status);
         }
 
-        if (amount != 1_000) {
-            throw new IllegalArgumentException("amount mismatch");
+        // 패치 1
+        if (!Objects.equals(pgMerchantUid, req.getMerchantUid())) {
+            log.warn("merchantUid mismatch: req={}, pg={}", req.getMerchantUid(), pgMerchantUid);
         }
 
-        paymentRepository.findByImpUid(req.getImpUid()).ifPresent(existing -> {
-            return;
-        });
+        if (amount != 1_000)
+            throw new IllegalArgumentException("amount mismatch");
 
-        Payment payment = paymentRepository.findByMerchantUid(req.getMerchantUid()).orElseGet(() -> {
+        // 패치1
+        if (paymentRepository.findByImpUid(req.getImpUid()).isPresent()) {
+            log.info("already confirmed: imp={}", req.getImpUid());
+            return;
+        }
+
+        // paymentRepository.findByImpUid(req.getImpUid()).ifPresent(existing -> {
+        // return;
+        // });
+
+        // Payment payment =
+        // paymentRepository.findByMerchantUid(req.getMerchantUid()).orElseGet(() -> {
+        // Reservation reservation =
+        // reservationRepository.findById(req.getReservationId())
+        // .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+
+        Payment payment = paymentRepository.findByMerchantUid(req.getMerchantUid())
+                .orElseGet(() -> paymentRepository
+                        .findTopByReservationIdAndStatusOrderByIdDesc(req.getReservationId(), "READY")
+                        .orElse(null));
+
+        if (payment == null) {
             Reservation reservation = reservationRepository.findById(req.getReservationId())
                     .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
-            return Payment.builder()
+            payment = Payment.builder()
                     .reservation(reservation)
                     .merchantUid(pgMerchantUid)
                     .amount(amount)
                     .status("READY")
                     .build();
-        });
+        }
 
         payment.setImpUid(req.getImpUid());
         payment.setStatus("PAID");
         payment.setMethod(payMethod);
         payment.setProvider("portone");
         payment.setPaidAt(LocalDateTime.now());
-        payment.setReceiptUrl(receiptUrl);
         try {
+            payment.setReceiptUrl(receiptUrl);
             payment.setRawPayload(objectMapper.writeValueAsString(pay));
-        } catch (Exception e) {
+        } catch (Exception ignore) {
         }
+
+        paymentRepository.save(payment);
 
         Reservation r = payment.getReservation();
         r.setStatus("PAID");

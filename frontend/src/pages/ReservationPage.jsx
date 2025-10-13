@@ -15,7 +15,7 @@ export default function ReservationPage() {
         partySize: 2,
         userName: '',
         contactPhone: '',
-        specialRequest: ''
+        specialRequests: '',
     });
 
     const onChange = (e) => {
@@ -66,7 +66,7 @@ export default function ReservationPage() {
 
             IMP.request_pay(
                 {
-                    pg: 'danal_tpay',
+                    pg: 'tosspay', // kg이니시스(html5_inicis), 다날(dnal_tpay), 토스(tosspay) 결제성공
                     pay_method: 'card',
                     merchant_uid: merchantUid,
                     name,
@@ -145,7 +145,7 @@ export default function ReservationPage() {
             </div>
 
             <label className="mt16">요청사항</label>
-            <textarea name="specialRequest" rows={4} value={form.specialRequest} onChange={onChange} placeholder="예: 알레르기 여부 등등." />
+            <textarea name="specialRequests" rows={4} value={form.specialRequests} onChange={onChange} placeholder="예: 알레르기 여부 등등." />
 
             <p className="help mt16">보증금 10,000원 선결제 후 예약이 확정됩니다.</p>
 

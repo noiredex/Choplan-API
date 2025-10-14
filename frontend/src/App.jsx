@@ -13,7 +13,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/reservations" element={<ReservationPage />} />
         <Route path="/reservations/success" element={<SuccessPage />} />
-        <Route path="/mypage" element={<UserMyPage />} />
+        <Route path="/user/mypage" element={<UserMyPage />} />
       </Routes>
     </BrowserRouter>
   );

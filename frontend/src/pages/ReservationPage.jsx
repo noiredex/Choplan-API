@@ -151,6 +151,9 @@ export default function ReservationPage() {
 
             <button className="btn block mt24" disabled={loading} onClick={handleReserveAndPay}> {loading ? '결제 처리 중...' : '토스페이로 결제하기'}
             </button>
+
+            <button className="btn block mt24" onClick={() => nav('/')}>취소
+            </button>
         </div>
     );
 }

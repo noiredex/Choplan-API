@@ -34,7 +34,7 @@ export default function App() {
             <Route path="/user/mypage/profile/edit" element={<ProfileEditPage />} />
             <Route path="/reservations" element={<ReservationPage />} />
             <Route path="/reservations/success" element={<SuccessPage />} />
-            <Route path="/user/mypage" element={<MyPageModal />} />
+            {/* <Route path="/user/mypage" element={<MyPageModal />} /> */}
           </Routes>         
       </div>
 

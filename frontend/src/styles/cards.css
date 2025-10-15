@@ -1,0 +1,5 @@
+.reservation-card { display:flex; gap:12px; padding:12px; border-bottom:1px solid var(--line); }
+.reservation-card .thumb { width:72px; height:72px; background:#f3f4f6; border-radius:12px; }
+.reservation-card .meta { flex:1; }
+.reservation-card .meta .name { font-weight:700; }
+.badge { font-size: 12px; padding: 4px 8px; border-radius: 999px; background: var(--wine-100); color: var(--wine); }

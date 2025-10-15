@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import '../styles/button.css';
 
 export default function SuccessPage() {
     return (

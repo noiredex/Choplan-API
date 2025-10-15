@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import http from '../api/http';
 import '../styles/form.css';
-import '../styles/button.css';
 
 export default function ReservationPage() {
     const nav = useNavigate();

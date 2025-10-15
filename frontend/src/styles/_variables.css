@@ -1,0 +1,14 @@
+:root {
+--wine: #7A1E3A; /* 메인 와인 */
+--wine-600: #8e2b49; /* hover */
+--wine-100: #f7eef1; /* 연한 배경 */
+--accent: #4b5563; /* 중간 텍스트(회색) */
+--bg: #ffffff; /* 화이트 */
+--line: #e5e7eb; /* 구분선 */
+--positive: #10b981; /* 성공 */
+--warning: #f59e0b; /* 경고 */
+--danger: #ef4444; /* 위험 */
+--radius-xl: 16px;
+--radius-2xl: 20px;
+--shadow: 0 6px 16px rgba(0,0,0,.08);
+}

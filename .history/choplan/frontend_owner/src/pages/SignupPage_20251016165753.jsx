@@ -214,7 +214,7 @@ function SignupPage() {
           {loading ? (
             <div className="spinner"></div>
           ) : (
-            "회원가입"
+            "회원가입"                  ㅍ 
           )}
         </button>
 

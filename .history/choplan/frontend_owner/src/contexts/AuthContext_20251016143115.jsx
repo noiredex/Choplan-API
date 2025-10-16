@@ -1,5 +1,5 @@
 // 점주 로그인 및 인증 관련 Context
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEggect } from "react";
 
 export const AuthContext = createContext();
 

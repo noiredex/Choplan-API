@@ -68,7 +68,6 @@ public class Users {
     private UserRole role; // CUSTOMER, OWNER, ADMIN
 
     // CUSTOMER 전용 상태
-    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     private CustomerStatus customerStatus = CustomerStatus.ACTIVE;

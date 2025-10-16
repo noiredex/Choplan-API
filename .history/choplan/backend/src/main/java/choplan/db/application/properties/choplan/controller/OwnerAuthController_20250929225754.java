@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import choplan.db.application.properties.choplan.dto.AuthResponse;
 import choplan.db.application.properties.choplan.dto.SignupRequestOwner;
 import choplan.db.application.properties.choplan.entity.Users;
+import choplan.db.application.properties.choplan.entity.OwnerStatus;
 import choplan.db.application.properties.choplan.service.OwnerService;
 import lombok.RequiredArgsConstructor;
 
@@ -29,22 +30,18 @@ public class OwnerAuthController {
     /**
      * OWNER 회원가입
      * - 사업자등록증 파일 업로드 필요
-     * - @ModelAttribute로 DTO와 파일을 함께 받음
      */
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AuthResponse> signupOwner(
             @ModelAttribute SignupRequestOwner request,
-            @RequestParam("businessRegistrationDoc") MultipartFile businessRegistrationDoc) {
+            @RequestParam("businessDoc") MultipartFile businessDoc) {
 
         try {
-            // 실제 S3 업로드 로직 연결 위치
-            // 예: String businessDocUrl = s3Uploader.upload(businessRegistrationDoc, "business-docs");
-            String businessDocUrl = "/uploads/" + businessRegistrationDoc.getOriginalFilename();
+            // ⚠️ 여기서는 MultipartFile → S3 업로드 후 URL로 변환하는 로직 필요
+            String businessDocUrl = "/uploads/" + businessDoc.getOriginalFilename();
 
-            // OwnerService로 회원 등록 (파일 URL 포함)
             Users savedOwner = ownerService.registerOwner(request, businessDocUrl);
 
-            // 응답 통일: AuthResponse(status, message, data)
             return ResponseEntity.ok(
                     new AuthResponse(
                             200,
@@ -53,18 +50,13 @@ public class OwnerAuthController {
                                     "userId", savedOwner.getUserId(),
                                     "email", savedOwner.getEmail(),
                                     "role", savedOwner.getRole().name(),
-                                    "ownerStatus", savedOwner.getOwnerStatus().name(),
-                                    "businessDocUrl", businessDocUrl
+                                    "ownerStatus", savedOwner.getOwnerStatus().name()
                             )
                     )
             );
-
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new AuthResponse(400, e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new AuthResponse(500, "서버 오류: " + e.getMessage(), null));
         }
     }
 

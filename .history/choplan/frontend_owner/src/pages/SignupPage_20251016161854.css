@@ -64,7 +64,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* 로딩 스피너 스타일 */
+/* ✅ 로딩 스피너 스타일 */
 .spinner {
   width: 20px;
   height: 20px;

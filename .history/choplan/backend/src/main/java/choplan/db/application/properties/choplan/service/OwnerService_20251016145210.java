@@ -1,11 +1,5 @@
 package choplan.db.application.properties.choplan.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +22,13 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class OwnerService {
@@ -36,7 +37,7 @@ public class OwnerService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // .env(application.yml)에서 주입받는 AWS 설정
+    // ✅ .env (application.yml)에서 주입받는 AWS 설정
     @Value("${AWS_ACCESS_KEY_ID}")
     private String awsAccessKey;
 
@@ -52,23 +53,23 @@ public class OwnerService {
     /**
      * OWNER 회원가입 (S3 업로드 포함)
      */
-    public Users registerOwner(SignupRequestOwner request, MultipartFile businessDoc) {
+    public Users registerOwner(SignupRequestOwner request, String ignoredBusinessDocUrl) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        // 주소 구성
+        // ✅ 주소 구성
         StoreAddress storeAddress = new StoreAddress();
         storeAddress.setRoadAddress(request.getRoadAddress());
         storeAddress.setDetailAddress(request.getDetailAddress());
 
-        // 비밀번호 암호화
+        // ✅ 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-        // S3 업로드 실행
-        String uploadedUrl = uploadToS3(businessDoc);
+        // ✅ S3 업로드 실행
+        String uploadedUrl = uploadToS3(request.getBusinessRegistrationDoc());
 
-        // 사용자 엔티티 생성
+        // ✅ 사용자 엔티티 생성
         Users user = Users.builder()
                 .email(request.getEmail())
                 .passwordHash(encodedPassword)
@@ -77,7 +78,7 @@ public class OwnerService {
                 .storeName(request.getStoreName())
                 .storePhone(request.getStorePhone())
                 .storeAddress(storeAddress)
-                .businessRegistrationDoc(uploadedUrl) // S3 업로드 URL 저장
+                .businessRegistrationDoc(uploadedUrl) // ✅ S3 업로드 URL 저장
                 .role(UserRole.OWNER)
                 .ownerStatus(OwnerStatus.PENDING)
                 .build();

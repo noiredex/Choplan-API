@@ -18,7 +18,7 @@ public class AuthResponse {
     public String getMessage() { return message;}
     public void setMessage(String message) { this.message = message; }
 
-    public Object getData() { return data; }
-    public void setDate(Object data) { this.data = data; }
+    public Object getDate() { return data; }
+    public void setDate(Object data) { this.data = date; }
     
 }

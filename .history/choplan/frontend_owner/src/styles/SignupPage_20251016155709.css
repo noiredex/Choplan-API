@@ -1,0 +1,48 @@
+.signup-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.signup-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.file-label {
+  margin-top: 10px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 10px 0 15px 0;
+}
+
+.error {
+  color: #d9534f;
+  font-size: 13px;
+  text-align: left;
+  margin-top: -8px;
+  margin-bottom: 6px;
+}
+
+.success {
+  color: #198754;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.login-link {
+  margin-top: 15px;
+}

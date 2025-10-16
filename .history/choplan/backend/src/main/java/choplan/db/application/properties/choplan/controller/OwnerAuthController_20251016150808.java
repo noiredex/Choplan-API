@@ -29,18 +29,21 @@ public class OwnerAuthController {
     /**
      * OWNER 회원가입
      * - 사업자등록증 파일 업로드 필요
+     * - @ModelAttribute로 DTO와 파일을 함께 받음
      */
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AuthResponse> signupOwner(
-            @ModelAttribute SignupRequestOwner request,
-            @RequestParam("businessRegistrationDoc") MultipartFile businessDoc) {
+public ResponseEntity<AuthResponse> signupOwner(
+        @ModelAttribute SignupRequestOwner request,
+        @RequestParam("businessRegistrationDoc") MultipartFile businessDoc) {
+
 
         try {
-            // 실제 S3 업로드 로직 연결 (현재는 로컬 경로 예시)
-            String businessDocUrl = "/uploads/" + businessDoc.getOriginalFilename();
+            // 실제 S3 업로드 로직 연결 위치
+            // 예: String businessDocUrl = s3Uploader.upload(businessRegistrationDoc, "business-docs");
+            String businessDocUrl = "/uploads/" + businessRegistrationDoc.getOriginalFilename();
 
             // OwnerService로 회원 등록 (파일 URL 포함)
-            Users savedOwner = ownerService.registerOwner(request, businessDoc);
+            Users savedOwner = ownerService.registerOwner(request, businessDocUrl);
 
             // 응답 통일: AuthResponse(status, message, data)
             return ResponseEntity.ok(
@@ -62,7 +65,7 @@ public class OwnerAuthController {
                     .body(new AuthResponse(400, e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new AuthResponse(500, "서버 내부 오류: " + e.getMessage(), null));
+                    .body(new AuthResponse(500, "서버 오류: " + e.getMessage(), null));
         }
     }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "../../styles/RecommendedStores.css";
 
 const storeList = [
@@ -9,10 +9,7 @@ const storeList = [
   { id: 5, name: "스시 코우", desc: "초밥 · 콜키지 가능", category: "초밥", image: "/assets/banner3.jpg" },
 ];
 
-export default function RecommendedStores() {
-  const categories = ["전체", "이자카야", "초밥", "한식", "양식"];
-  const [selectedCategory, setSelectedCategory] = useState("전체");
-
+export default function RecommendedStores({ selectedCategory }) {
   const filteredStores =
     selectedCategory === "전체"
       ? storeList
@@ -20,20 +17,9 @@ export default function RecommendedStores() {
 
   return (
     <section className="recommended-stores">
-      <h2>추천 매장</h2>
-
-      <div className="category-filter">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            className={`category-btn ${selectedCategory === cat ? "active" : ""}`}
-            onClick={() => setSelectedCategory(cat)}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
+      <h2>
+        {selectedCategory === "전체" ? "추천 매장" : `${selectedCategory} 매장`}
+      </h2>
       <div className="store-grid">
         {filteredStores.map((store) => (
           <div key={store.id} className="store-card">

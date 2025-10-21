@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import "../../styles/Sidebar.css";
 
-export default function Sidebar() {
+export default function Sidebar({ setSelectedCategory }) {
   const [isOpen, setIsOpen] = useState(false);
+  const categories = ["전체", "이자카야", "초밥", "한식", "양식", "중식", "동남아", "인도", "기타"];
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    setIsOpen(false); // 클릭 시 사이드바 닫힘
+  };
 
   return (
     <>
@@ -19,11 +25,11 @@ export default function Sidebar() {
         </div>
 
         <ul className="sidebar-menu">
-          {["다이닝", "이자카야", "초밥", "한식", "양식", "중식", "동남아", "인도", "기타"].map(
-            (category) => (
-              <li key={category}>{category}</li>
-            )
-          )}
+          {categories.map((cat) => (
+            <li key={cat} onClick={() => handleCategoryClick(cat)}>
+              {cat}
+            </li>
+          ))}
         </ul>
 
         <hr />

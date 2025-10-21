@@ -1,15 +1,15 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
-import NotFoundPage from "./pages/NotFoundPage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import StoreDetail from "./pages/StoreDetail";
+import "./App.css";
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/store/:id" element={<StoreDetail />} />
+      </Routes>
+    </Router>
   );
 }

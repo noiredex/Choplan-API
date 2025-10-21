@@ -6,15 +6,19 @@ import UserActivity from "./UserActivity";
 import Footer from "../common/Footer";
 
 export default function Home() {
-    const [seletedCategory, setSelectedCategory] = useState("전체");
-    
-    return (
-        <div>
-            <Navbar setSelectedCategory={setSelectedCategory} />
-            <RecommendedStores selectedCategory={seletedCategory} />
-            <NoticeSection />
-            <UserActivity />
-            <Footer />
-        </div>
-    );
+  const [selectedCategory, setSelectedCategory] = useState("전체");
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  return (
+    <div>
+      <Navbar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
+      <RecommendedStores selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
+      <NoticeSection />
+      <UserActivity />
+      <Footer />
+    </div>
+  );
 }

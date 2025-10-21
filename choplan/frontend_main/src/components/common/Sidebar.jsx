@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import "../../styles/Sidebar.css";
 
-export default function Sidebar({ setSelectedCategory }) {
+export default function Sidebar({ selectedCategory, onCategoryChange }) {
   const [isOpen, setIsOpen] = useState(false);
   const categories = ["전체", "이자카야", "초밥", "한식", "양식", "중식", "동남아", "인도", "기타"];
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-    setIsOpen(false); // 클릭 시 사이드바 닫힘
+    onCategoryChange(category);
+    setIsOpen(false);
   };
 
   return (
@@ -26,7 +26,11 @@ export default function Sidebar({ setSelectedCategory }) {
 
         <ul className="sidebar-menu">
           {categories.map((cat) => (
-            <li key={cat} onClick={() => handleCategoryClick(cat)}>
+            <li
+              key={cat}
+              onClick={() => handleCategoryClick(cat)}
+              className={selectedCategory === cat ? "active" : ""}
+            >
               {cat}
             </li>
           ))}

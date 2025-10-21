@@ -9,7 +9,9 @@ const storeList = [
   { id: 5, name: "스시 코우", desc: "초밥 · 콜키지 가능", category: "초밥", image: "/assets/banner3.jpg" },
 ];
 
-export default function RecommendedStores({ selectedCategory }) {
+export default function RecommendedStores({ selectedCategory, onCategoryChange }) {
+  const categories = ["전체", "이자카야", "초밥", "한식", "양식", "중식", "동남아", "인도", "기타"];
+
   const filteredStores =
     selectedCategory === "전체"
       ? storeList
@@ -17,9 +19,20 @@ export default function RecommendedStores({ selectedCategory }) {
 
   return (
     <section className="recommended-stores">
-      <h2>
-        {selectedCategory === "전체" ? "추천 매장" : `${selectedCategory} 매장`}
-      </h2>
+      <div className="category-buttons">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => onCategoryChange(cat)}
+            className={selectedCategory === cat ? "active" : ""}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <h2>{selectedCategory === "전체" ? "추천 매장" : `${selectedCategory} 매장`}</h2>
+
       <div className="store-grid">
         {filteredStores.map((store) => (
           <div key={store.id} className="store-card">

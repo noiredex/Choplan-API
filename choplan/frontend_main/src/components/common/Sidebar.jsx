@@ -1,52 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../styles/Sidebar.css";
 
-export default function Sidebar({ selectedCategory, onCategoryChange }) {
+const categories = [
+  "전체", // 모든 매장 보기
+  "다이닝",
+  "뷔페",
+  "미쉐린",
+  "이자카야",
+  "초밥",
+  "한식",
+  "양식",
+  "중식",
+  "동남아",
+  "인도",
+  "기타",
+];
+
+export default function Sidebar({ selectedCategory, onSelectCategory, searchQuery }) {
   const [isOpen, setIsOpen] = useState(false);
-  const categories = ["전체", "이자카야", "초밥", "한식", "양식", "중식", "동남아", "인도", "기타"];
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
-
-  const handleCategoryClick = (category) => {
-    onCategoryChange(category);
-    setIsOpen(false);
-  };
+  // 검색어 → 카테고리 자동 반영
+  useEffect(() => {
+    if (searchQuery && categories.includes(searchQuery)) {
+      onSelectCategory(searchQuery);
+    } else if (!searchQuery && selectedCategory !== "전체") {
+      onSelectCategory("전체");
+    }
+  }, [searchQuery]);
 
   return (
-    <>
-      <button className="menu-btn" onClick={toggleSidebar}>
+    <div className={`sidebar ${isOpen ? "open" : ""}`}>
+      <button className="sidebar-toggle" onClick={() => setIsOpen(!isOpen)}>
         ☰
       </button>
 
-      <div className={`sidebar ${isOpen ? "open" : ""}`}>
-        <div className="sidebar-header">
-          <h3>업종 카테고리</h3>
-          <button onClick={toggleSidebar}>✕</button>
-        </div>
-
-        <ul className="sidebar-menu">
-          {categories.map((cat) => (
+      {isOpen && (
+        <ul className="sidebar-list">
+          {categories.map((category) => (
             <li
-              key={cat}
-              onClick={() => handleCategoryClick(cat)}
-              className={selectedCategory === cat ? "active" : ""}
+              key={category}
+              className={selectedCategory === category ? "active" : ""}
+              onClick={() => onSelectCategory(category)}
             >
-              {cat}
+              {category}
             </li>
           ))}
         </ul>
-
-        <hr />
-
-        <ul className="sidebar-footer">
-          <li>내 프로필</li>
-          <li>예약 내역</li>
-          <li>리뷰 관리</li>
-          <li>공지사항</li>
-        </ul>
-      </div>
-
-      {isOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
-    </>
+      )}
+    </div>
   );
 }

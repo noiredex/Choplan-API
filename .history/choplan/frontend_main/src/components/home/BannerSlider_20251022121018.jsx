@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/BannerSlider.css"; // 스타일 파일 경로
+import "../../styles/BannerSlider.css"; // 스타일 폴더 경로 확인 — home 기준 두 단계 위로
 
 export default function BannerSlider() {
   return (

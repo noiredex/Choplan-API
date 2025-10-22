@@ -1,0 +1,58 @@
+.home-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+/* 반응형 사이드바 */
+@media (max-width: 1024px) {
+  .home-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .sidebar-list {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .sidebar-list li {
+    padding: 10px 14px;
+    border-bottom: none;
+    border-right: 1px solid #eee;
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+}
+
+/* 모바일 추가 (세로형 정렬) */
+@media (max-width: 600px) {
+  .main-content {
+    padding: 10px;
+  }
+
+  .sidebar-list li {
+    font-size: 14px;
+  }
+
+  .search-bar input {
+    width: 100%;
+  }
+}

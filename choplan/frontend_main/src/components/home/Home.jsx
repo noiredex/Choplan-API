@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Sidebar from "../common/Sidebar";
-import SearchBar from "./SearchBar";
-import BannerSlider from "./BannerSlider";
-import RecommendedStores from "./RecommendedStores";
-import "../../styles/Home.css";
+import Sidebar from "../components/Sidebar";
+import SearchBar from "../components/SearchBar";
+import BannerSlider from "../components/BannerSlider";
+import RecommendedStores from "../components/RecommendedStores";
+import "../styles/Home.css";
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
@@ -14,16 +14,12 @@ export default function Home() {
       <Sidebar
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
-        searchQuery={searchQuery}  // 양방향 동기화
+        searchQuery={searchQuery}
       />
-
       <div className="main-content">
         <SearchBar onSearch={setSearchQuery} />
         <BannerSlider />
-        <RecommendedStores
-          category={selectedCategory}
-          searchQuery={searchQuery}
-        />
+        <RecommendedStores selectedCategory={selectedCategory} />
       </div>
     </div>
   );

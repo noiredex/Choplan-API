@@ -1,0 +1,129 @@
+/* ===== 기본 구조 ===== */
+.home-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  overflow: hidden;
+}
+
+/* ===== 사이드바 ===== */
+.sidebar {
+  width: 250px;
+  min-width: 200px;
+  max-width: 280px;
+  background-color: #ffffff;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-list li {
+  padding: 14px 18px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar-list li:hover,
+.sidebar-list li.active {
+  background-color: #f0f0f0;
+}
+
+/* ===== 메인 콘텐츠 ===== */
+.main-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+/* ===== PC / 데스크탑 (>=1025px) ===== */
+@media (min-width: 1025px) {
+  .home-container {
+    flex-direction: row;
+  }
+
+  .sidebar {
+    position: relative;
+    height: 100vh;
+  }
+
+  .main-content {
+    padding: 24px 40px;
+  }
+}
+
+/* ===== 태블릿 (<=1024px) ===== */
+@media (max-width: 1024px) {
+  .home-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .sidebar-list {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .sidebar-list li {
+    flex: 0 0 auto;
+    border-bottom: none;
+    border-right: 1px solid #eee;
+    white-space: nowrap;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+}
+
+/* ===== 모바일 (<=600px) ===== */
+@media (max-width: 600px) {
+  .home-container {
+    flex-direction: column;
+  }
+
+  .sidebar-list li {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .main-content {
+    padding: 10px;
+  }
+
+  .search-bar input {
+    width: 100%;
+    font-size: 14px;
+  }
+}

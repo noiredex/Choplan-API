@@ -4,7 +4,7 @@ import "../../styles/RecommendedStores.css";
 export default function RecommendedStores({ category, searchQuery }) {
   const [stores, setStores] = useState([]);
 
-  // 예시 데이터 (실제 API 연결 시 이 부분 대체)
+  // ✅ 예시 데이터 (실제 API 연결 시 이 부분 대체)
   const allStores = [
     { id: 1, name: "한남 초밥", category: "초밥", desc: "룸 보유 · 주차 가능", img: "https://placehold.co/300x200" },
     { id: 2, name: "이자카야 마루", category: "이자카야", desc: "룸 없음 · 예약 필수", img: "https://placehold.co/300x200" },

@@ -1,0 +1,79 @@
+/* ===== 전체 레이아웃 ===== */
+.home-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  transform-origin: top left;
+}
+
+/* ===== 메인 콘텐츠 ===== */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+/* ===== 배너 ===== */
+.banner-section {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.banner-section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.banner-section .swiper {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ===== 매장 리스트 ===== */
+.store-section {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== PC: 가로형 카드 ===== */
+@media (min-width: 1025px) {
+  .store-section {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+  }
+}
+
+/* ===== 비율 축소 대응 ===== */
+html, body {
+  transform-origin: top left;
+  zoom: 100%;
+}
+
+@media (max-width: 1280px) {
+  html {
+    zoom: 90%;
+  }
+}
+
+@media (max-width: 1024px) {
+  html {
+    zoom: 85%;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    zoom: 80%;
+  }
+}

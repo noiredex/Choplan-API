@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
-import "../../styles/Sidebar.css";
+import "../styles/Sidebar.css";
 
-export default function Sidebar({ selectedCategory, onSelectCategory, searchQuery }) {
+export default function Sidebar({
+  selectedCategory,
+  onSelectCategory,
+  searchQuery,
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const categories = [
@@ -16,30 +20,31 @@ export default function Sidebar({ selectedCategory, onSelectCategory, searchQuer
     "기타",
   ];
 
-  // 검색어에 따라 자동 카테고리 선택
+  // 검색어가 변경되면 해당 카테고리 자동 선택
   useEffect(() => {
     if (searchQuery && searchQuery.trim() !== "") {
-      const matched = categories.find((cat) => searchQuery.includes(cat));
-      if (matched) onSelectCategory(matched);
+      const matchedCategory = categories.find((cat) =>
+        searchQuery.includes(cat)
+      );
+      if (matchedCategory) {
+        onSelectCategory(matchedCategory);
+      }
     }
   }, [searchQuery]);
 
   return (
     <>
-      {/* 햄버거 버튼 (항상 노출) */}
+      {/* 햄버거 버튼 */}
       <button
         className="sidebar-toggle"
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="메뉴 열기"
+        aria-label="Toggle sidebar"
       >
         ☰
       </button>
 
-      {/* 오버레이 (열릴 때만) */}
-      {isOpen && <div className="overlay" onClick={() => setIsOpen(false)}></div>}
-
-      {/* 세로형 사이드바 */}
-      <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+      {/* 사이드바 */}
+      <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
         <ul className="sidebar-list">
           {categories.map((category, index) => (
             <li
@@ -47,14 +52,14 @@ export default function Sidebar({ selectedCategory, onSelectCategory, searchQuer
               className={selectedCategory === category ? "active" : ""}
               onClick={() => {
                 onSelectCategory(category);
-                setIsOpen(false);
+                setIsOpen(false); // 모바일에서 클릭 시 자동 닫힘
               }}
             >
               {category}
             </li>
           ))}
         </ul>
-      </aside>
+      </div>
     </>
   );
 }

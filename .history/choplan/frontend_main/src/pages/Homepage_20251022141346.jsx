@@ -18,7 +18,7 @@ export default function HomePage() {
         searchQuery={searchQuery}
       />
 
-      {/* 메인 콘텐츠 */}
+      {/* 메인 영역 */}
       <div className="main-content">
         <SearchBar onSearch={setSearchQuery} />
 

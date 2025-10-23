@@ -1,0 +1,65 @@
+/* ===== 기본 설정 ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 100vh;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 2000;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 사이드바 열릴 때 - 이제는 main-content를 밀지 않고 '위에 겹침' */
+.sidebar.open {
+  transform: translateX(0);
+}
+
+/* ===== 햄버거 버튼 ===== */
+.sidebar-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 2100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== 반응형 ===== */
+@media (min-width: 1025px) {
+  .sidebar {
+    transform: none;
+    position: static;
+    height: auto;
+    width: 220px;
+    box-shadow: none;
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+}
+
+/* ===== 메인 콘텐츠 고정 폭 ===== */
+.main-content {
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+/* 사이드바가 열려도 main-content는 width 변화 없음 */
+.home-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}

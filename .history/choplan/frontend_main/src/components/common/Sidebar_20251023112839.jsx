@@ -16,7 +16,7 @@ export default function Sidebar({ selectedCategory, onSelectCategory, searchQuer
     "기타",
   ];
 
-  // 검색어에 따라 자동 카테고리 선택
+  // ✅ 검색어가 입력되면 카테고리 자동 반영
   useEffect(() => {
     if (searchQuery && searchQuery.trim() !== "") {
       const matched = categories.find((cat) => searchQuery.includes(cat));
@@ -24,9 +24,22 @@ export default function Sidebar({ selectedCategory, onSelectCategory, searchQuer
     }
   }, [searchQuery]);
 
+  // ✅ 외부 클릭 시 사이드바 닫힘 (모바일에서만)
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const sidebar = document.querySelector(".sidebar");
+      const toggle = document.querySelector(".sidebar-toggle");
+      if (isOpen && sidebar && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [isOpen]);
+
   return (
     <>
-      {/* 햄버거 버튼 (항상 노출) */}
+      {/* 햄버거 버튼 */}
       <button
         className="sidebar-toggle"
         onClick={() => setIsOpen(!isOpen)}
@@ -35,10 +48,10 @@ export default function Sidebar({ selectedCategory, onSelectCategory, searchQuer
         ☰
       </button>
 
-      {/* 오버레이 (열릴 때만) */}
+      {/* 오버레이 (열렸을 때만 표시) */}
       {isOpen && <div className="overlay" onClick={() => setIsOpen(false)}></div>}
 
-      {/* 세로형 사이드바 */}
+      {/* 사이드바 영역 */}
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
         <ul className="sidebar-list">
           {categories.map((category, index) => (
@@ -47,7 +60,7 @@ export default function Sidebar({ selectedCategory, onSelectCategory, searchQuer
               className={selectedCategory === category ? "active" : ""}
               onClick={() => {
                 onSelectCategory(category);
-                setIsOpen(false);
+                setIsOpen(false); // 클릭 시 닫기 (모바일 UX)
               }}
             >
               {category}

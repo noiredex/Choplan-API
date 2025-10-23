@@ -4,7 +4,7 @@ import "../../styles/RecommendedStores.css";
 
 export default function RecommendedStores({ category, searchQuery }) {
   const [stores, setStores] = useState([]);
-  const navigate = useNavigate(); // 페이지 이동 훅
+  const navigate = useNavigate();
 
   // 예시 데이터 (실제 API 연결 시 이 부분 대체)
   const allStores = [
@@ -44,8 +44,7 @@ export default function RecommendedStores({ category, searchQuery }) {
               <div className="store-info">
                 <h3>{store.name}</h3>
                 <p>{store.desc}</p>
-                <button onClick={() => navigate(`/store/${store.id}`)}>더보기</button>
-              {/* 더보기 클릭시 /store/매장id 페이지로 이동 */}
+                <button>더보기</button>
               </div>
             </div>
           ))

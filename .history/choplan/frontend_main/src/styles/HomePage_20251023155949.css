@@ -115,6 +115,11 @@
     flex-direction: row;
   }
 
+  .sidebar {
+    position: relative;
+    height: 100vh;
+  }
+
   .main-content {
     padding: 24px 40px;
   }
@@ -122,11 +127,6 @@
   .banner-section h2 {
   font-size: 24px;
   }
-
-  .benner-section .swiper-container {
-    aspect-ratio: 16 / 9;
-    border-radius: 12px;
-    }
   }
 
 /* ===== 태블릿 (<=1024px) ===== */
@@ -158,20 +158,12 @@
   .main-content {
     padding: 16px;
   }
-
-  .banner-section h2 {
-    font-size: 20px;
-  } 
 }
 
 /* ===== 모바일 (<=600px) ===== */
 @media (max-width: 600px) {
   .home-container {
     flex-direction: column;
-  }
-
-  .banner-section h2 {
-    font-size: 18px;
   }
 
   .sidebar-list li {

@@ -93,15 +93,3 @@
     display: block;
   }
 }
-
-/* ===== 반응형 (모바일) ===== */
-@media (max-width: 1024px) {
-  .sidebar {
-    position: fixed;
-    height: 100vh;
-  }
-
-  .sidebar-list li {
-    font-size: 15px;
-  }
-}

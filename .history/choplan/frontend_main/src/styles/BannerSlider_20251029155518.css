@@ -10,10 +10,6 @@
   overflow: visible;
 }
 
-.custom-swiper .swiper-wrapper {
-  overflow: visible; /* 오른쪽 슬라이드도 잘리지 않게 */
-}
-
 .banner-slide {
   display: flex;
   justify-content: center;

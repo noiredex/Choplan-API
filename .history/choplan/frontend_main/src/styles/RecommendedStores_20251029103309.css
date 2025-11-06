@@ -1,10 +1,12 @@
+/* ===== 컨테이너 ===== */
 .recommended-stores {
   padding: 2px;
   background: #1a1a1a;
 }
 
+/* ===== 섹션 제목 ===== */
 .recommended-stores h2 {
-  font-size: 18px;
+  font-size: 18px; /* ‘오늘의 추천 매장’과 동일한 크기 */
   margin-bottom: 10px;
   font-weight: 600;
   color: #ffffff;
@@ -13,7 +15,7 @@
 /* ===== 매장 카드 그리드 ===== */
 .store-grid {
   display: grid;
-  gap: 12px;
+  gap: 1px;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
@@ -38,12 +40,12 @@
 
 .store-card img {
   width: 100%;
-  height: 180px;
+  height: 160px;
   object-fit: cover;
 }
 
 .store-info {
-  padding: 14px;
+  padding: 15px;
 }
 
 .store-info h3 {
@@ -52,44 +54,15 @@
   color: #fff;
 }
 
-.store-desc {
-  font-size: 13px;
-  color: #ccc;
-  margin-bottom: 6px;
-}
-
-.store-meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.rating {
-  color: #f8d64e;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.reviews {
-  color: #aaa;
-  font-size: 12px;
-}
-
-.store-hours {
-  font-size: 12px;
-  color: #bbb;
-  margin-bottom: 4px;
-}
-
-.store-price {
-  font-size: 13px;
+.store-info p {
+  font-size: 8px;
   color: #ccc;
   margin-bottom: 10px;
 }
 
 .store-info button {
   width: 100%;
+  max-width: 160px;
   padding: 8px 0;
   border: none;
   background-color: #2f6fed;
@@ -102,21 +75,4 @@
 
 .store-info button:hover {
   background-color: #1d56c4;
-}
-
-/* ====== 반응형 ====== */
-@media (max-width: 768px) {
-  .store-card img {
-    height: 160px;
-  }
-
-  .store-info h3 {
-    font-size: 15px;
-  }
-
-  .store-desc,
-  .store-hours,
-  .store-price {
-    font-size: 12px;
-  }
 }

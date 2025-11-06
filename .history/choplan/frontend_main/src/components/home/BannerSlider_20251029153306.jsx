@@ -16,7 +16,7 @@ export default function BannerSlider() {
     <div className="banner-slider">
       <Swiper
         modules={[Autoplay, Pagination]}
-        slidesPerView={1.15}
+        slidesPerView={1.15} // 중앙 메인 + 양 옆 일부 노출
         centeredSlides={true}
         spaceBetween={20}
         loop={true}
